@@ -11,7 +11,7 @@
 # Use uma imagem base PHP com FPM
 FROM php:8.2-fpm
 
-# Instalar dependências e extensões necessárias para o Laravel
+# Instalar dependências e extensões necessárias
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
@@ -22,27 +22,29 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip bcmath opcache
 
-
-# Instalar o Composer (gerenciador de dependências do PHP)
+# Instalar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir o diretório de trabalho dentro do contêiner
+# Definir o diretório de trabalho
 WORKDIR /var/www
 
-# Copiar o arquivo composer.json e composer.lock para o contêiner
+# Copiar os arquivos do Composer e instalar dependências
 COPY composer.json composer.lock ./
-
-# Instalar as dependências do Laravel com o Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Copiar o restante do código do projeto
+# Copiar o restante do código
 COPY . .
 
-# Definir as permissões apropriadas para os diretórios do Laravel
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Configurar permissões
+RUN mkdir -p /var/www/storage/framework/cache/data \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expor a porta 9000 para o PHP-FPM
+# Definir variáveis de ambiente
+ENV APP_ENV=production
+
+# Expor a porta 9000
 EXPOSE 9000
 
-# Configurar o comando padrão para o contêiner
+# Comando padrão
 CMD ["php-fpm"]

@@ -68,7 +68,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Suporte a Credenciais
+     | Suporte a Credenciais teste
      |--------------------------------------------------------------------------
      |
      | Se você precisar permitir o envio de credenciais como cookies, tokens de

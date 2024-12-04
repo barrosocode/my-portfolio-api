@@ -8,38 +8,34 @@
 #     unzip \
 #     && docker-php-ext-install pdo pdo_mysql
 
-# Use uma imagem base PHP com FPM
+# Adicionando o Nginx
 FROM php:8.2-fpm
 
-# Instalar dependências e extensões necessárias para o Laravel
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
+    nginx \
     libzip-dev \
     zip \
     unzip \
     git \
+    libpq-dev \
     && docker-php-ext-install pdo pdo_mysql
 
-# Instalar o Composer (gerenciador de dependências do PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir o diretório de trabalho dentro do contêiner
 WORKDIR /var/www
 
-# Copiar todo o código do projeto (incluindo o arquivo artisan)
 COPY . .
 
-# Instalar as dependências do Laravel com o Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Definir as permissões apropriadas para os diretórios do Laravel
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Expor a porta 9000 para o PHP-FPM
-EXPOSE 9000
+EXPOSE 80
 
-# Configurar o comando padrão para o contêiner
-CMD ["php-fpm"]
+CMD ["sh", "-c", "service nginx start && php-fpm"]
+
 
 
 # server {

@@ -8,6 +8,15 @@ use App\Http\Controllers\Api\LoginController;
 
 // ROTAS PÚBLICAS
 
+// Rota pública para testes
+Route::get('/', function () {
+    return response()->json([
+        'status' => true,
+        'message' => 'Bem vindo a api'
+    ]);
+});
+Route::get('/contacts', [ContatoController::class, 'index']);
+
 // Rotas para autenticação
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 

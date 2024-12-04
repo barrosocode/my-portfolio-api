@@ -14,13 +14,11 @@ services:
             - laravel_network
 
     webserver:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: nginx:latest
         container_name: laravel_webserver
-        restart: unless-stopped
         volumes:
             - .:/var/www/html
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
         ports:
             - "8000:80"
         networks:

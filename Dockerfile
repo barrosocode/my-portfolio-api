@@ -28,7 +28,7 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 

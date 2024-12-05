@@ -9,18 +9,23 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo pdo_mysql
 
+# Copia o composer para dentro do container
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
+# Copia os arquivos da aplicação para o diretório correto
 COPY . .
 
+# Instala as dependências do composer (use --no-dev apenas em produção)
 RUN composer install --no-dev --optimize-autoloader
 
+# Ajusta permissões para o Laravel
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 80
 
+# Inicia o Nginx e o PHP-FPM ao mesmo tempo
 CMD ["sh", "-c", "service nginx start && php-fpm"]
 
 

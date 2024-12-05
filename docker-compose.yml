@@ -10,6 +10,8 @@ services:
         volumes:
             - .:/var/www/html
             - ./php.ini:/usr/local/etc/php/php.ini
+        depends_on:
+            - db # Garantir que o banco de dados esteja pronto antes
         networks:
             - laravel_network
 
